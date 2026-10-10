@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>[SECURE-CRM-PRO] Star Merchant Support - Enterprise Edition</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    
+    /* --- टेक्स्ट सेलेक्शन रोकने के लिए --- */
+    html, body { width: 100%; min-height: 100vh; background-color: #F8F9FA; color: #111827; overflow-x: hidden; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+    input, textarea, select { -webkit-user-select: auto !important; -moz-user-select: auto !important; -ms-user-select: auto !important; user-select: auto !important; }
+
+    .staff-auth-screen { position: fixed; inset: 0; background: #F8F9FA; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; }
+    .auth-card-white { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 24px; padding: 28px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+    .auth-title-white { font-size: 18px; font-weight: 900; color: #111827; margin-bottom: 4px; }
+    .auth-sub-white { font-size: 11px; color: #6B7280; margin-bottom: 20px; }
+
+    .input-group { margin-bottom: 14px; text-align: left; }
+    .input-group label { display: block; font-size: 11px; font-weight: 700; color: #4B5563; margin-bottom: 4px; }
+    .input-group input { width: 100%; padding: 12px; background: #F9FAFB; border: 1px solid #D1D5DB; border-radius: 10px; color: #111; font-size: 14px; outline: none; }
+    .input-group input:focus { border-color: #2563EB; background: #FFF; }
+
+    .btn-primary { width: 100%; background: #111827; color: #FFF; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-secondary { background: #4B5563; color: #FFF; border: none; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 6px; }
+
+    .error-msg { color: #DC2626; font-size: 11px; font-weight: 700; margin-top: 8px; display: none; }
+
+    .staff-shell { display: none; flex-direction: column; min-height: 100vh; padding-bottom: 70px; }
+    .staff-shell.active { display: flex; }
+
+    .top-header { background: #FFFFFF; border-bottom: 1px solid #E5E7EB; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .brand-area { display: flex; align-items: center; gap: 10px; }
+    .burger-menu-btn { background: #F3F4F6; border: 1px solid #D1D5DB; color: #111; padding: 6px 10px; border-radius: 8px; font-size: 14px; font-weight: 900; cursor: pointer; }
+    .brand { font-size: 14px; font-weight: 900; color: #111827; cursor: pointer; user-select: none; }
+
+    .staff-burger-drawer { position: fixed; top: 0; left: -100%; width: 300px; height: 100%; background: #FFFFFF; border-right: 1px solid #E5E7EB; z-index: 999999; box-shadow: 10px 0 30px rgba(0,0,0,0.1); transition: left 0.3s ease; padding: 20px; display: flex; flex-direction: column; }
+    .staff-burger-drawer.active { left: 0; }
+
+    .crm-control-bar { background: #111827; color: #FFF; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
+    .crm-btn-pause { background: #F59E0B; color: #111; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer; }
+    .crm-btn-pause.paused { background: #EF4444; color: #FFF; }
+
+    .content-area { padding: 16px; }
+
+    .search-box-crm { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .search-box-crm input, .search-box-crm select { border: none; outline: none; width: 100%; font-size: 13px; color: #111; background: transparent; }
+
+    .metrics-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .metric-box { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); cursor: pointer; }
+    .metric-title { font-size: 10px; color: #6B7280; font-weight: 700; }
+    .metric-val { font-size: 18px; font-weight: 900; color: #2563EB; margin-top: 3px; }
+
+    .card-white { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+    
+    .item-row-white { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 12px; margin-bottom: 10px; position: relative; }
+    .item-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+
+    .status-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; margin-top: 4px; }
+    .status-green { background: #DCFCE7; color: #15803D; }
+    .status-yellow { background: #FEF3C7; color: #B45309; }
+    .status-red { background: #FEE2E2; color: #DC2626; }
+
+    .action-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .btn-action { padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
+    
+    .btn-pending-yellow { background: #F59E0B !important; color: #FFFFFF !important; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3); }
+    .btn-approved-green { background: #059669 !important; color: #FFFFFF !important; cursor: not-allowed; opacity: 0.9; }
+
+    .btn-info { background: #3B82F6; color: #FFF; }
+    .btn-delete { background: #DC2626; color: #FFF; }
+    .btn-warning { background: #D97706; color: #FFF; }
+
+    @keyframes spinLoader { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #FFF; animation: spinLoader 0.8s ease-in-out infinite; }
+
+    .secret-admin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; }
+    .secret-admin-modal.active { display: flex; }
+    .admin-modal-card { background: #FFF; border-radius: 16px; padding: 20px; width: 100%; max-width: 440px; max-height: 85vh; overflow-y: auto; position: relative; }
+
+    .custom-alert-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999999; display: none; justify-content: center; align-items: center; padding: 20px; }
+    .custom-alert-modal.active { display: flex; }
+    .custom-alert-card { background: #FFF; border-radius: 20px; padding: 24px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative; }
+
+    .profile-box { text-align: center; padding: 10px 0; }
+    .profile-avatar-container { width: 80px; height: 80px; margin: 0 auto 10px auto; position: relative; border-radius: 50%; overflow: hidden; background: #E5E7EB; border: 2px solid #2563EB; display: flex; align-items: center; justify-content: center; }
+    .profile-avatar-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .profile-avatar-placeholder { font-size: 28px; color: #374151; font-weight: 900; }
+
+    .bottom-nav-white { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #FFFFFF; border-top: 1px solid #E5E7EB; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; color: #6B7280; cursor: pointer; user-select: none; height: 100%; transition: color 0.3s ease; }
+    .nav-item.active { color: #111827; font-weight: 800; }
+    
+    .nav-item .icon { display: flex; align-items: center; justify-content: center; height: 26px; margin-bottom: 2px; position: relative; }
+    .nav-item .icon svg { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    .nav-item:not(.active) .icon svg { opacity: 0.4; transform: scale(0.85); filter: grayscale(100%); }
+    .nav-item.active .icon svg { opacity: 1; transform: scale(1.15); filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2)); }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    
+    .activity-log-item { background: #FFFBEB; border: 1px solid #FDE68A; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 11px; text-align: left; }
+    
+    .admin-close-btn { position: absolute; top: 12px; right: 12px; background: #FEE2E2; color: #DC2626; border: 2px solid #FCA5A5; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .admin-close-btn:hover { background: #DC2626; color: #FFF; }
+
+    .fullscreen-slide-drawer {
+      position: fixed;
+      inset: 0;
+      background: #FFFFFF;
+      z-index: 9999999;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease-in-out;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .drawer-left { transform: translateX(-100%); }
+    .drawer-left.active { transform: translateX(0); }
+    .drawer-right { transform: translateX(100%); }
+    .drawer-right.active { transform: translateX(0); }
+    
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #E5E7EB;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      position: sticky;
+      top: 0;
+      background: #FFF;
+      z-index: 10;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- कस्टम प्रीमियम अलर्ट मोडल -->
+  <div class="custom-alert-modal" id="customAlertModal">
+    <div class="custom-alert-card">
+      <div id="customAlertIcon" style="font-size: 32px; margin-bottom: 8px;">✨</div>
+      <div id="customAlertTitle" style="font-size: 16px; font-weight: 900; color: #111827; margin-bottom: 6px;">सूचना</div>
+      <div id="customAlertMessage" style="font-size: 12px; color: #4B5563; line-height: 1.5; margin-bottom: 18px;">मैसेज यहाँ दिखाई देगा...</div>
+      <div id="customAlertBody"></div>
+      <button class="btn-primary" style="margin-top:0; padding: 10px;" onclick="closeCustomAlert()">ठीक है (OK)</button>
+    </div>
+  </div>
+
+  <!-- रिप्लाई देने के लिए नया पॉपअप -->
+  <div class="custom-alert-modal" id="replyQueryModal">
+    <div class="custom-alert-card" style="text-align: left;">
+      <div style="font-size: 16px; font-weight: 900; color: #111827; margin-bottom: 6px;">💬 मर्चेंट को रिप्लाई दें</div>
+      <div id="replyQueryContext" style="font-size: 11px; color: #4B5563; margin-bottom: 12px; background: #F3F4F6; padding: 10px; border-radius: 8px; border: 1px solid #E5E7EB;"></div>
+      <textarea id="staffReplyInput" rows="4" style="width: 100%; padding: 12px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 12px; margin-bottom: 12px; outline: none; resize: none; font-family: inherit;" placeholder="अपना रिप्लाई यहाँ टाइप करें..."></textarea>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-primary" style="margin-top:0; padding: 10px; background: #E5E7EB; color: #111;" onclick="closeReplyModal()">रद्द करें</button>
+        <button class="btn-primary" style="margin-top:0; padding: 10px; background: #059669;" id="sendReplyBtn" onclick="submitQueryReply()">भेजें 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- सीक्रेट पिन ऑथराइजेशन मोडल -->
+  <div class="custom-alert-modal" id="actionAuthModal">
+    <div class="custom-alert-card">
+      <div style="font-size: 32px; margin-bottom: 8px;">🔐</div>
+      <div style="font-size: 16px; font-weight: 900; color: #DC2626; margin-bottom: 6px;">सिक्योरिटी चेक</div>
+      <div style="font-size: 12px; color: #4B5563; line-height: 1.5; margin-bottom: 18px;">इस एक्शन को कन्फर्म करने के लिए अपना 4-अंकों का स्टाफ पिन दर्ज करें:</div>
+      <div class="input-group">
+        <input type="password" id="actionAuthPinInput" placeholder="****" maxlength="4" style="text-align:center; letter-spacing:8px; font-size:18px;">
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-primary" style="margin-top:0; padding: 10px; background: #E5E7EB; color: #111;" onclick="closeActionAuthModal()">रद्द करें</button>
+        <button class="btn-primary" style="margin-top:0; padding: 10px; background: #DC2626;" id="confirmActionBtn" onclick="executeSecuredAction()">कन्फर्म</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- इंडिविजुअल स्टाफ एक्टिविटी मोडल -->
+  <div class="custom-alert-modal" id="staffActivityModal">
+    <div class="custom-alert-card" style="max-width: 400px; text-align:left; position: relative;">
+      <button onclick="closeStaffActivityModal()" class="admin-close-btn" style="top:10px; right:10px;">✕</button>
+      <div style="font-size:16px; font-weight:900; color:#111827; margin-bottom:12px; padding-right:30px;" id="activityModalTitle">स्टाफ एक्टिविटी</div>
+      <div id="staffDetailedActivityList" style="max-height: 350px; overflow-y: auto; background:#F9FAFB; padding:10px; border-radius:8px; border:1px solid #E5E7EB;">
+        <div style="font-size:11px; color:#6B7280; text-align:center;">लोड हो रहा है...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚨 LEFT FULL-SCREEN SLIDING WINDOW: RED ALERT 🚨 -->
+  <div class="fullscreen-slide-drawer drawer-left" id="leftRedAlertDrawer">
+    <div class="drawer-header">
+      <div style="font-size:16px; font-weight:900; color:#DC2626;">🔴 रेड अलर्ट (एक्सपायर्ड सब्सक्रिप्शन)</div>
+      <button onclick="toggleLeftRedAlertDrawer(false)" class="admin-close-btn" style="position:static;">✕</button>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <div class="search-box-crm" style="margin-bottom: 8px;">
+        <span>🔍</span>
+        <input type="text" id="leftDrawerSearch" placeholder="नाम, फोन नंबर या एरिया से तुरंत खोजें..." oninput="filterLeftDrawerRedAlert(this.value)">
+      </div>
+      <div class="search-box-crm">
+        <span>📍</span>
+        <select id="leftDrawerAreaSelect" onchange="filterLeftDrawerByArea(this.value)">
+          <option value="">सभी एरिया / लोकेशन (All Areas)</option>
+        </select>
+      </div>
+    </div>
+    <div id="leftDrawerExpiredList" style="flex:1; overflow-y:auto;">
+      <div style="font-size:12px; color:#6B7280; text-align:center; padding:20px;">लोड हो रहा है...</div>
+    </div>
+  </div>
+
+  <!-- 🚨 RIGHT FULL-SCREEN SLIDING WINDOW: MILESTONE LEADS 🚨 -->
+  <div class="fullscreen-slide-drawer drawer-right" id="rightMilestoneDrawer">
+    <div class="drawer-header">
+      <div style="font-size:16px; font-weight:900; color:#059669;">🎯 50+ कस्टमर माइलस्टोन लीड्स</div>
+      <button onclick="toggleRightMilestoneDrawer(false)" class="admin-close-btn" style="position:static;">✕</button>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <div class="search-box-crm" style="margin-bottom: 8px;">
+        <span>🔍</span>
+        <input type="text" id="rightDrawerSearch" placeholder="मर्चेंट नाम या एरिया से लाइव सर्च करें..." oninput="filterRightDrawerMilestone(this.value)">
+      </div>
+    </div>
+    <div id="rightDrawerMilestoneList" style="flex:1; overflow-y:auto;">
+      <div style="font-size:12px; color:#6B7280; text-align:center; padding:20px;">लोड हो रहा है...</div>
+    </div>
+  </div>
+
+  <!-- स्टाफ लॉगिन स्क्रीन -->
+  <div class="staff-auth-screen" id="staffAuthScreen">
+    <div class="auth-card-white">
+      <div class="auth-title-white">STAR MERCHANT SUPPORT</div>
+      <div class="auth-sub-white">सुरक्षित पोर्टल में प्रवेश के लिए अधिकृत नाम और पिन दर्ज करें</div>
+      <div class="input-group">
+        <label>स्टाफ का अधिकृत नाम</label>
+        <input type="text" id="staffLoginName" placeholder="उदा: अभिषेक">
+      </div>
+      <div class="input-group">
+        <label>सिक्योरिटी पिन (4-Digit PIN)</label>
+        <input type="password" id="staffLoginPin" placeholder="****" maxlength="4">
+      </div>
+      <button class="btn-primary" id="loginBtn" onclick="verifyStaffLogin()">सुरक्षित लॉगिन करें</button>
+      <div class="error-msg" id="loginErrorMsg">नाम या पिन अमान्य है!</div>
+    </div>
+  </div>
+
+  <!-- स्टाफ बर्गर मेन्यू -->
+  <div class="staff-burger-drawer" id="staffBurgerDrawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div style="font-size:15px; font-weight:900; color:#111827;">🚨 स्टाफ अलर्ट & एडमिन मॉनिटर</div>
+      <button onclick="toggleStaffBurgerDrawer()" style="background:none; border:none; font-size:16px; font-weight:900; cursor:pointer;">✕</button>
+    </div>
+    <div style="font-size:11px; color:#6B7280; margin-bottom:12px;">डायनेमिक स्टाफ अटेंडेंस और एडमिन लॉग्स:</div>
+    
+    <div style="background:#FEF2F2; border:1px solid #FCA5A5; padding:12px; border-radius:10px; margin-bottom:12px;">
+      <div style="font-size:12px; font-weight:900; color:#991B1B; margin-bottom:4px;">🚨 एडमिन विजिट टाइमिंग (Admin Tracking)</div>
+      <div style="font-size:11px; color:#7F1D1D; line-height:1.6;" id="adminVisitAlertBox">डेटा लोड हो रहा है...</div>
+    </div>
+
+    <div style="font-size:11px; font-weight:800; color:#111827; margin-bottom:6px;">📜 अटेंडेंस हिस्ट्री:</div>
+    <div id="staffBurgerAttendanceLog" style="max-height:200px; overflow-y:auto; background:#F9FAFB; border:1px solid #E5E7EB; border-radius:8px; padding:8px; font-size:11px;">
+      <div style="color:#6B7280; text-align:center;">डेटा लोड हो रहा है...</div>
+    </div>
+
+    <button class="btn-primary" style="margin-top:auto;" onclick="toggleStaffBurgerDrawer()">बंद करें</button>
+  </div>
+
+  <!-- सुपर एडमिन मास्टर लॉक मोडल -->
+  <div class="secret-admin-modal" id="adminPinModal">
+    <div class="admin-modal-card" style="max-width: 320px; text-align: center; position: relative;">
+      <button onclick="document.getElementById('adminPinModal').classList.remove('active')" class="admin-close-btn">✕</button>
+      <div style="font-size: 24px; margin-bottom: 6px; margin-top: 10px;">🔐</div>
+      <div style="font-size: 16px; font-weight: 900; color: #111827; margin-bottom: 6px;">सुपर एडमिन मास्टर लॉक</div>
+      <div style="font-size: 11px; color: #6B7280; margin-bottom: 16px;">मास्टर ऑडिट पैनल खोलने के लिए अपना 4-डिजिट गुप्त पिन दर्ज करें:</div>
+      <div class="input-group">
+        <input type="password" id="adminSecretKeyInput" placeholder="मास्टर पिन" maxlength="4" style="text-align: center; font-size: 18px; letter-spacing: 6px;">
+      </div>
+      <button class="btn-primary" id="adminUnlockBtn" onclick="verifyAdminSecretPin()">🔓 पैनल अनलॉक करें</button>
+    </div>
+  </div>
+
+  <!-- सीक्रेट एडमिन मास्टर ऑडिट पैनल -->
+  <div class="secret-admin-modal" id="secretAdminModal">
+    <div class="admin-modal-card" style="max-width: 500px; padding-top: 30px;">
+      <button onclick="closeSecretAdminPanel()" class="admin-close-btn">✕</button>
+      <div style="font-size:18px; font-weight:900; color:#111827; margin-bottom:16px; text-align:center;">👑 सुपर एडमिन मास्टर पैनल</div>
+      
+      <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:14px; border-radius:12px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="font-size:14px; font-weight:900; color:#166534;">👥 स्टाफ मैनेजमेंट & कंट्रोल</div>
+          <button class="btn-action" style="background:#16A34A; color:#FFF; font-size:10px;" onclick="fetchStaffTeamFromSupabase(this)">🔄 रिफ्रेश</button>
+        </div>
+        
+        <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #D1D5DB; margin-bottom:10px;">
+          <div style="font-size:11px; font-weight:800; color:#111827; margin-bottom:6px;">➕ नया अधिकृत स्टाफ जोड़ें:</div>
+          <div style="display:flex; gap:6px; margin-bottom:6px;">
+            <input type="text" id="newStaffNameInput" placeholder="स्टाफ का नाम" style="flex:1; padding:8px; font-size:12px; border:1px solid #D1D5DB; border-radius:6px;">
+            <input type="password" id="newStaffPinInput" placeholder="4-डिजिट पिन" maxlength="4" style="width:90px; padding:8px; font-size:12px; border:1px solid #D1D5DB; border-radius:6px;">
+          </div>
+          <button class="btn-primary" style="margin-top:0; padding:8px; font-size:12px; background:#059669;" id="addStaffBtn" onclick="addNewAuthorizedStaff()">स्वीकृत स्टाफ जोड़ें</button>
+        </div>
+
+        <div id="adminTeamControlList" style="max-height:180px; overflow-y:auto;">
+          <div style="font-size:11px; color:#6B7280; text-align:center;">डेटाबेस से स्टाफ लोड हो रहा है...</div>
+        </div>
+      </div>
+
+      <div style="background:#FEF2F2; border:1px solid #FECACA; padding:14px; border-radius:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="font-size:14px; font-weight:900; color:#991B1B;">🚫 ब्लॉक्ड मर्चेंट अर्चीव (Recovery)</div>
+          <button class="btn-action" style="background:#DC2626; color:#FFF; font-size:10px;" onclick="fetchBlockedMerchantsAdmin(this)">🔄 रिफ्रेश</button>
+        </div>
+        <div style="font-size:10px; color:#7F1D1D; margin-bottom:8px;">अगर किसी स्टाफ ने गलती से कोई मर्चेंट ब्लॉक/डिलीट कर दिया है, तो आप उसे यहाँ से वापस अनब्लॉक कर सकते हैं।</div>
+        
+        <div id="adminBlockedMerchantsList" style="max-height:180px; overflow-y:auto; background:#FFF; border-radius:8px; padding:8px; border:1px solid #FCA5A5;">
+          <div style="font-size:11px; color:#6B7280; text-align:center;">डेटा लोड हो रहा है...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- मुख्य शेल -->
+  <div class="staff-shell" id="staffShell">
+    <header class="top-header">
+      <div class="brand-area">
+        <button class="burger-menu-btn" onclick="toggleStaffBurgerDrawer()">☰</button>
+        <div class="brand" onclick="handleBrandSecretClick()" title="Secure Portal">STAR SUPPORT ⭐</div>
+      </div>
+      <div style="font-size: 11px; font-weight: 700; color: #059669;" id="staffTimerDisplay">एक्टिव समय: 00:00</div>
+    </header>
+
+    <div class="crm-control-bar" id="crmControlBar">
+      <span id="crmStatusText">🟢 स्टेटस: वर्किंग (Active)</span>
+      <div>
+        <span id="pauseTimerDisplay" style="margin-right: 8px; font-size: 11px; color: #FCD34D;">पॉज समय: 00:00</span>
+        <button class="btn-action" id="crmPauseBtn" style="background:#F59E0B; color:#111; font-weight:900; padding:4px 8px;" onclick="toggleStaffPause()">⏸ पॉज</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      
+      <!-- TAB 1: डैशबोर्ड और सर्च बार -->
+      <div class="tab-pane active" id="staff-tab-approvals">
+        <div class="metrics-grid-4">
+          <div class="metric-box">
+            <div class="metric-title">पेंडिंग दुकानें</div>
+            <div class="metric-val" id="metricPendingCount" style="color: #D97706;">0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" id="metricApprovedLiveCount" style="color: #059669;">0</div>
+            <div class="metric-title">अप्रूव्ड (लाइव)</div>
+          </div>
+          <div class="metric-box" onclick="toggleRightMilestoneDrawer(true)" title="50+ लीड्स देखें">
+            <div class="metric-title">🎯 50+ माइलस्टोन 👆</div>
+            <div class="metric-val" id="metricMilestoneCount" style="color: #059669;">0</div>
+          </div>
+          <div class="metric-box" onclick="toggleLeftRedAlertDrawer(true); playSirenSound();" title="रेड अलर्ट देखें">
+            <div class="metric-title">🔴 रेड अलर्ट्स 👆</div>
+            <div class="metric-val" id="metricBlockedCount" style="color: #DC2626;">0</div>
+          </div>
+        </div>
+
+        <div class="search-box-crm">
+          <span>🔍</span>
+          <input type="text" id="staffSearchInput" placeholder="दुकान का नाम या फोन नंबर से खोजें..." oninput="filterStaffReels(this.value)">
+        </div>
+
+        <div class="card-white">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <div style="font-size: 14px; font-weight: 800; color: #111827;">मर्चेंट मैनेजमेंट लिस्ट</div>
+            <button class="btn-action" id="refreshDataBtn" style="background:#2563EB; color:#FFF;" onclick="fetchSupabaseMerchants()">🔄 रिफ्रेश</button>
+          </div>
+          <div id="staffPendingList">
+            <div style="font-size:12px; color:#6B7280; text-align:center; padding:10px;">सुपरबेस से डेटा लोड हो रहा है...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: क्वेरीज़ -->
+      <div class="tab-pane" id="staff-tab-queries">
+        <div class="card-white" style="border-left: 4px solid #2563EB;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <div style="font-size: 15px; font-weight: 900; color: #111827;">💬 मर्चेंट सपोर्ट डेस्क</div>
+            <button class="btn-action" id="syncQueriesBtn" style="background:#2563EB; color:#FFF; font-size:10px;" onclick="fetchMerchantQueries()">🔄 सिंक</button>
+          </div>
+          <div class="search-box-crm" style="margin-bottom: 12px;">
+            <span>🔍</span>
+            <input type="text" id="querySearchInput" placeholder="मर्चेंट नाम या क्वेरी टेक्स्ट से खोजें..." oninput="filterQueriesLive(this.value)">
+          </div>
+          <div id="dedicatedMerchantQueriesContainer">
+            <div style="font-size:12px; color:#6B7280; text-align:center; padding:20px;">क्वेरीज़ लोड हो रही हैं...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: रेड अलर्ट -->
+      <div class="tab-pane" id="staff-tab-redalert">
+        <div class="card-white" style="border-left: 4px solid #DC2626; text-align: center; padding: 25px;">
+          <div style="font-size: 18px; font-weight: 900; color: #DC2626; margin-bottom: 8px;">🔴 रेड अलर्ट्स (Expired Subscriptions)</div>
+          <div style="font-size: 12px; color: #4B5563; margin-bottom: 16px;">जिन मर्चेंट्स का सब्सक्रिप्शन खत्म हो गया है, उनकी पूरी फुल-स्क्रीन विंडो देखने के लिए नीचे दिए गए बटन पर क्लिक करें:</div>
+          <button class="btn-primary" style="background: #DC2626;" onclick="toggleLeftRedAlertDrawer(true); playSirenSound();">📂 फुल-स्क्रीन रेड अलर्ट विंडो खोलें</button>
+        </div>
+      </div>
+
+      <!-- TAB 4: रील्स क्वारंटीन -->
+      <div class="tab-pane" id="staff-tab-reels">
+        <div class="card-white" style="border-left: 4px solid #DC2626;">
+          <div style="font-size: 14px; font-weight: 900; color: #111827; margin-bottom: 4px;">🚨 ऑटो-ब्लॉक रील्स क्वारंटीन</div>
+          <div id="staffBlockedReelsList">
+            <div style="font-size:12px; color:#6B7280; text-align:center; padding:10px;">कोई ब्लॉक रील नहीं मिली।</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: प्रोफाइल, एनालिटिक्स और एक्टिविटी लॉग्स -->
+      <div class="tab-pane" id="staff-tab-profile">
+        <div class="card-white">
+          <div style="font-size: 14px; font-weight: 800; color: #111827; margin-bottom: 10px;">स्टाफ प्रोफाइल & कार्य सत्र</div>
+          <div class="profile-box">
+            <div class="profile-avatar-container" id="profileAvatarBox">
+              <span class="profile-avatar-placeholder" id="profileInitial">A</span>
+            </div>
+            <div style="font-size: 16px; font-weight: 900; color: #111827; margin-top: 10px;" id="profileDisplayName">स्टाफ मेंबर</div>
+            <div style="font-size: 11px; color: #6B7280; margin-top: 2px;" id="profileRoleText">रोल: सीनियर सपोर्ट एक्जीक्यूटिव</div>
+
+            <div style="margin-top: 15px; background: #F9FAFB; padding: 14px; border-radius: 12px; border: 1px solid #E5E7EB; text-align: left;">
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                <span style="color:#6B7280;">कुल एक्टिव समय:</span>
+                <span style="font-weight:800; color:#059669;" id="profileTimerText">00:00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+                <span style="color:#6B7280;">कुल पॉज (ब्रेक) समय:</span>
+                <span style="font-weight:800; color:#DC2626;" id="profilePauseText">00:00</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:12px;">
+                <span style="color:#6B7280;">आज स्वीकृत दुकानें:</span>
+                <span style="font-weight:800; color:#2563EB;" id="todayApprovedCount">0</span>
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:15px; background:#DC2626;" onclick="handleStaffLogout()">🚪 लॉग आउट करें</button>
+          </div>
+        </div>
+
+        <div class="card-white" style="margin-top: 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <div style="font-size: 14px; font-weight: 900; color: #111827;">📝 मेरी आज की एक्टिविटी</div>
+            <button class="btn-action" style="background:#E5E7EB; color:#111;" id="activityRefreshBtn" onclick="fetchMyActivityLogs()">🔄 रिफ्रेश</button>
+          </div>
+          <div id="staffMyActivityList" style="max-height: 180px; overflow-y: auto;">
+            <div style="font-size:11px; color:#6B7280; text-align:center;">डेटा लोड हो रहा है...</div>
+          </div>
+        </div>
+
+        <div class="card-white" style="margin-top: 14px;">
+          <div style="font-size: 14px; font-weight: 900; color: #111827; margin-bottom: 8px;">📊 मर्चेंट परफॉर्मेंस एनालिटिक्स</div>
+          <div style="position: relative; width: 100%; height: 220px;">
+            <canvas id="merchantPerformanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- बॉटम नेविगेशन बार (3D मैटेलिक आइकॉन्स के साथ) -->
+    <nav class="bottom-nav-white">
+      <svg width="0" height="0" style="position:absolute; width:0; height:0;">
+        <defs>
+          <linearGradient id="metalStaff3D" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F3F4F6"/>
+            <stop offset="25%" stop-color="#9CA3AF"/>
+            <stop offset="50%" stop-color="#4B5563"/>
+            <stop offset="80%" stop-color="#111827"/>
+            <stop offset="100%" stop-color="#374151"/>
+          </linearGradient>
+          <filter id="staffDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- 1. डैशबोर्ड -->
+      <div class="nav-item active" onclick="switchStaffTab('approvals', this)">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="url(#metalStaff3D)" stroke-width="8" filter="url(#staffDropShadow)"/>
+            <line x1="35" y1="35" x2="65" y2="35" stroke="url(#metalStaff3D)" stroke-width="8" stroke-linecap="round"/>
+            <line x1="35" y1="55" x2="65" y2="55" stroke="url(#metalStaff3D)" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>डैशबोर्ड</div>
+      </div>
+
+      <!-- 2. क्वेरीज़ -->
+      <div class="nav-item" onclick="switchStaffTab('queries', this)" id="navQueryItem">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <path d="M 15 20 L 85 20 C 90 20, 90 60, 85 60 L 55 60 L 35 80 L 35 60 L 15 60 C 10 60, 10 20, 15 20 Z" fill="none" stroke="url(#metalStaff3D)" stroke-width="8" stroke-linejoin="round" filter="url(#staffDropShadow)"/>
+          </svg>
+          <span id="queryCountBadge" style="position: absolute; top: -6px; right: -12px; background: #DC2626; color: #FFF; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 50%; display: none;">0</span>
+        </div>
+        <div>क्वेरीज़</div>
+      </div>
+
+      <!-- 3. रेड अलर्ट (अब क्लिक करते ही सायरन बजेगा!) -->
+      <div class="nav-item" onclick="switchStaffTab('redalert', this); toggleLeftRedAlertDrawer(true); playSirenSound();" id="navRedAlertItem">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="36" fill="#DC2626" filter="url(#staffDropShadow)"/>
+            <circle cx="50" cy="50" r="16" fill="#FFFFFF"/>
+          </svg>
+          <span id="redAlertCountBadge" style="position: absolute; top: -6px; right: -12px; background: #DC2626; color: #FFF; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 50%; display: none;">0</span>
+        </div>
+        <div>रेड अलर्ट</div>
+      </div>
+
+      <!-- 4. रील्स -->
+      <div class="nav-item" onclick="switchStaffTab('reels', this)">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <rect x="10" y="25" width="55" height="50" rx="8" fill="none" stroke="url(#metalStaff3D)" stroke-width="8" filter="url(#staffDropShadow)"/>
+            <polygon points="70,40 90,30 90,70 70,60" fill="url(#metalStaff3D)" filter="url(#staffDropShadow)"/>
+          </svg>
+        </div>
+        <div>रील्स</div>
+      </div>
+
+      <!-- 5. प्रोफाइल -->
+      <div class="nav-item" onclick="switchStaffTab('profile', this)">
+        <div class="icon">
+          <svg width="24" height="24" viewBox="0 0 100 100">
+            <circle cx="50" cy="35" r="16" fill="url(#metalStaff3D)" filter="url(#staffDropShadow)"/>
+            <path d="M 20 85 C 20 60, 35 55, 50 55 C 65 55, 80 60, 80 85" fill="none" stroke="url(#metalStaff3D)" stroke-width="8" stroke-linecap="round" filter="url(#staffDropShadow)"/>
+          </svg>
+        </div>
+        <div>प्रोफाइल</div>
+      </div>
+    </nav>
+  </div>
+
+<script>
+  const SUPABASE_URL = "https://gejrzpflcuvlbpedliwq.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_dw9J2AX0nd3SxPrRy9JGCg_YqS8ZfUF";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const ONESIGNAL_APP_ID = "8e294ccb-8236-4513-8860-86cf0cf1b275";
+  const ONESIGNAL_REST_API_KEY = "os_v2_app_ryuuzs4cgzcrhcdaq3hqz4nsouc7mskybtoes14z7wlwp6cgpm7bm324gkfqbf6knaco4w3hqkvvedesaz4um6f67dzd5v5wj3xxdpa";
+
+  let currentStaffName = "";
+  let currentStaffPin = "";
+  let sessionSeconds = 0;
+  let pauseSeconds = 0;
+  let isPaused = false;
+  let approvedTodayCount = 0;
+  let masterReelsData = [];
+  let merchantQueriesData = [];
+  let expiredMerchantsData = [];
+  let secretClickCount = 0;
+  let performanceChartInstance = null;
+  let staffTeamData = [];
+  
+  let activeReplyQueryId = null; 
+  let activeReplyMerchantName = ""; 
+  window.activeReplyQueryText = ""; 
+  
+  let pendingSecureAction = null;
+  let pendingSecureData = null;
+
+  // 🚨 पुलिस सायरन जनरेट करने का दमदार फंक्शन (Web Audio API) 🚨
+  function playSirenSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      let osc = audioCtx.createOscillator();
+      let gainNode = audioCtx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      let startTime = audioCtx.currentTime;
+      let duration = 2.5; // 2.5 सेकंड तक सायरन बजेगा
+
+      // ऊपर-नीचे फ्रीक्वेंसी बदलकर पुलिस सायरन जैसा साउंड बनाना
+      for (let i = 0; i < 4; i++) {
+        osc.frequency.exponentialRampToValueAtTime(880, startTime + (i * 0.6) + 0.3);
+        osc.frequency.exponentialRampToValueAtTime(440, startTime + (i * 0.6) + 0.6);
+      }
+
+      gainNode.gain.setValueAtTime(0.3, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    } catch (e) {
+      console.log("Audio not allowed by browser policy yet");
+    }
+  }
+
+  function showCustomAlert(title, message, icon = "✨", customBody = "") {
+    document.getElementById('customAlertTitle').innerText = title;
+    document.getElementById('customAlertMessage').innerText = message;
+    document.getElementById('customAlertIcon').innerText = icon;
+    document.getElementById('customAlertBody').innerHTML = customBody;
+    document.getElementById('customAlertModal').classList.add('active');
+  }
+
+  function closeCustomAlert() {
+    document.getElementById('customAlertModal').classList.remove('active');
+    document.getElementById('customAlertBody').innerHTML = "";
+  }
+
+  async function preloadAllBackendData() {
+    try {
+      const [merchantsRes, queriesRes] = await Promise.all([
+        supabaseClient.from('merchants').select('*'),
+        supabaseClient.from('merchant_queries').select('*').order('id', { ascending: false })
+      ]);
+
+      let rawData = merchantsRes.data || [];
+      rawData.forEach((item) => {
+        if(!item.customers) item.customers = 0; 
+        if(!item.location) item.location = "Delhi"; 
+        if(!item.address) item.address = "दिल्ली";
+      });
+      masterReelsData = rawData;
+      
+      expiredMerchantsData = masterReelsData.filter(m => m.subscription_status === 'expired' || m.subscription_status === 'inactive' || m.status === 'expired');
+      merchantQueriesData = queriesRes.data || [];
+
+      updateMetrics(); 
+      renderStaffReelsList(masterReelsData); 
+      renderMerchantPerformanceGraph(masterReelsData);
+      updateRedAlertBadgeCount(expiredMerchantsData.length);
+      updateQueryBadgeCount(merchantQueriesData.filter(q => q.status !== 'Resolved').length);
+      renderQueriesList(merchantQueriesData);
+    } catch (err) {
+      console.error("Preload error:", err);
+    }
+  }
+
+  async function verifyStaffLogin() {
+    const nameInput = document.getElementById('staffLoginName').value.trim();
+    const pinInput = document.getElementById('staffLoginPin').value.trim();
+    const errorMsg = document.getElementById('loginErrorMsg');
+    const btn = document.getElementById('loginBtn');
+    
+    if(!nameInput || !pinInput) {
+      errorMsg.innerText = "कृपया नाम और पिन दोनों दर्ज करें!";
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span> लॉगिन हो रहा है...';
+
+    try {
+      const { data, error } = await supabaseClient.rpc('secure_staff_login', { p_name: nameInput, p_pin: pinInput });
+      if (error) { errorMsg.innerText = "❌ डेटाबेस कनेक्शन त्रुटि!"; errorMsg.style.display = 'block'; btn.innerHTML = 'सुरक्षित लॉगिन करें'; return; }
+
+      if (data && data.success) {
+        currentStaffName = data.staff_name;
+        currentStaffPin = pinInput; 
+        errorMsg.style.display = 'none';
+
+        btn.innerHTML = '<span class="spinner"></span> डेटाबेस लोड हो रहा है...';
+        await preloadAllBackendData();
+
+        document.getElementById('staffAuthScreen').style.display = 'none';
+        document.getElementById('staffShell').classList.add('active');
+        
+        document.getElementById('profileDisplayName').innerText = currentStaffName;
+        document.getElementById('profileRoleText').innerText = `रोल: सीनियर सपोर्ट एक्जीक्यूटिव (${currentStaffName})`;
+        document.getElementById('profileInitial').innerText = currentStaffName.charAt(0).toUpperCase();
+        
+        await logStaffActivity('पोर्टल में लॉगिन किया', 'SYSTEM_ONLY_NO_MERCHANT');
+        startTimers();
+      } else {
+        errorMsg.innerText = data.message || "❌ अमान्य प्रयास!";
+        errorMsg.style.display = 'block';
+      }
+    } catch (e) {
+      errorMsg.innerText = "❌ नेटवर्क त्रुटि!";
+      errorMsg.style.display = 'block';
+    }
+    btn.innerHTML = 'सुरक्षित लॉगिन करें';
+  }
+
+  async function verifyAdminSecretPin() {
+    const enteredPin = document.getElementById('adminSecretKeyInput').value.trim();
+    const btn = document.getElementById('adminUnlockBtn');
+    btn.innerHTML = '<span class="spinner"></span> चेक हो रहा है...';
+    
+    try {
+      const { data, error } = await supabaseClient.rpc('verify_master_admin', { p_pin: enteredPin });
+      if(data === true) {
+        document.getElementById('adminPinModal').classList.remove('active');
+        document.getElementById('secretAdminModal').classList.add('active');
+        
+        // 🚨 एडमिन एंट्री / पैनल खुलते ही सायरन बजेगा! 🚨
+        playSirenSound();
+
+        await logStaffActivity('👑 मास्टर पैनल (Super Admin) अनलॉक किया', 'SYSTEM_ONLY_NO_MERCHANT');
+        fetchStaffTeamFromSupabase();
+        fetchBlockedMerchantsAdmin();
+      } else { showCustomAlert("त्रुटि", "गलत मास्टर पिन!", "❌"); }
+    } catch (e) { showCustomAlert("त्रुटि", "सर्वर से नहीं जुड़ सका।", "❌"); }
+    btn.innerHTML = '🔓 पैनल अनलॉक करें';
+  }
+
+  function closeSecretAdminPanel() { document.getElementById('secretAdminModal').classList.remove('active'); }
+
+  async function addNewAuthorizedStaff() {
+    const name = document.getElementById('newStaffNameInput').value.trim();
+    const pin = document.getElementById('newStaffPinInput').value.trim();
+    const btn = document.getElementById('addStaffBtn');
+
+    if (!name || pin.length !== 4) { showCustomAlert("त्रुटि", "कृपया नाम और 4 अंकों का पिन दर्ज करें।", "⚠"); return; }
+    
+    btn.innerHTML = '<span class="spinner"></span> जोड़ रहे हैं...';
+    try {
+      const { error } = await supabaseClient.from('staff_team').insert([{ name: name, pin: pin, status: 'Active' }]);
+      if (!error) {
+        showCustomAlert("सफलता", `स्टाफ "${name}" व्हाइटलिस्ट हो गया!`, "✅");
+        document.getElementById('newStaffNameInput').value = ''; document.getElementById('newStaffPinInput').value = '';
+        fetchStaffTeamFromSupabase();
+      } else { showCustomAlert("त्रुटि", "विफल: " + error.message, "❌"); }
+    } catch (e) { showCustomAlert("त्रुटि", "नेटवर्क त्रुटि।", "❌"); }
+    btn.innerHTML = 'स्वीकृत स्टाफ जोड़ें';
+  }
+
+  async function fetchStaffTeamFromSupabase(btn = null) {
+    if(btn) { btn.innerHTML = '<span class="spinner"></span>'; }
+    try {
+      const { data, error } = await supabaseClient.from('staff_team').select('*');
+      if (!error && data) staffTeamData = data; else staffTeamData = [];
+      renderAdminTeamList();
+    } catch (err) { staffTeamData = []; renderAdminTeamList(); }
+    if(btn) { btn.innerHTML = '🔄 रिफ्रेश'; }
+  }
+
+  function renderAdminTeamList() {
+    const container = document.getElementById('adminTeamControlList');
+    if (!staffTeamData || staffTeamData.length === 0) { container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center; padding:10px;">कोई स्टाफ मौजूद नहीं है।</div>'; return; }
+    let html = '';
+    staffTeamData.forEach(st => {
+      let isBlocked = st.status === 'Blocked';
+      html += `
+        <div style="background:#FFF; padding:12px; border-radius:8px; border:1px solid #E5E7EB; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+          <div style="cursor:pointer; flex:1;" onclick="openStaffActivity('${st.name}')" title="एक्टिविटी देखने के लिए क्लिक करें">
+            <div style="font-weight:900; color:#111827; font-size:13px;">👤 ${st.name} <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:${isBlocked ? '#FEE2E2' : '#DCFCE7'}; color:${isBlocked ? '#DC2626' : '#059669'}; margin-left:4px;">${isBlocked ? 'Blocked' : 'Active'}</span></div>
+            <div style="font-size:10px; color:#6B7280; margin-top:4px;">पिन: <b style="color:#111;">${st.pin}</b> (क्लिक करके एक्टिविटी देखें 👆)</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button class="btn-action" style="background:#3B82F6; color:#FFF; font-size:10px; justify-content:center;" onclick="adminChangeStaffPin('${st.id}', '${st.name}')">🔑 पिन बदलें</button>
+            <button class="btn-action" style="background:${isBlocked ? '#059669' : '#DC2626'}; color:#FFF; font-size:10px; justify-content:center;" onclick="toggleStaffBlockStatus('${st.id}', '${st.status}')">${isBlocked ? '🔓 अनब्लॉक' : '🚫 ब्लॉक'}</button>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  async function toggleStaffBlockStatus(id, currentStatus) {
+    const newStatus = currentStatus === 'Active' ? 'Blocked' : 'Active';
+    try { await supabaseClient.from('staff_team').update({ status: newStatus }).eq('id', id); fetchStaffTeamFromSupabase(); } catch (e) {}
+  }
+
+  function adminChangeStaffPin(id, name) {
+    const newPin = prompt(`स्टाफ (${name}) का नया 4-अंकों का पिन दर्ज करें:`);
+    if(newPin !== null && newPin.trim().length === 4) {
+      changeStaffPinInDb(id, newPin.trim(), name);
+    } else if (newPin !== null) { showCustomAlert("त्रुटि", "पिन केवल 4 अंकों का होना चाहिए!", "⚠️"); }
+  }
+
+  async function changeStaffPinInDb(id, newPin, name) {
+    try {
+      await supabaseClient.from('staff_team').update({ pin: newPin }).eq('id', id);
+      await logStaffActivity(`स्टाफ (${name}) का पिन बदला`, 'SUPER ADMIN');
+      showCustomAlert("सफलता", `स्टाफ (${name}) का पिन सफलतापूर्वक बदल दिया गया है! नया पिन: ${newPin}`, "✅");
+      fetchStaffTeamFromSupabase();
+    } catch(e) { showCustomAlert("त्रुटि", "पिन अपडेट करने में विफल।", "❌"); }
+  }
+
+  async function openStaffActivity(staffName) {
+    document.getElementById('activityModalTitle').innerText = `${staffName} की एक्टिविटी`;
+    const container = document.getElementById('staffDetailedActivityList');
+    container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center;"><span class="spinner" style="border-top-color:#111;"></span> लोड हो रहा है...</div>';
+    document.getElementById('staffActivityModal').classList.add('active');
+
+    try {
+      const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+      const { data, error } = await supabaseClient.from('staff_activity_logs')
+        .select('*')
+        .eq('staff_name', staffName)
+        .gte('created_at', todayStart.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center; padding:10px;">आज इनकी कोई एक्टिविटी नहीं है।</div>';
+        return;
+      }
+      
+      let html = '';
+      data.forEach(log => {
+        const timeStr = new Date(log.created_at).toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
+        html += `<div style="background:#FFF; border:1px solid #E5E7EB; border-left:3px solid #2563EB; padding:8px 10px; margin-bottom:8px; border-radius:6px; font-size:11px; color:#1F2937;">
+          <div style="font-size:9px; color:#6B7280; margin-bottom:2px;">⏰ ${timeStr}</div>
+          <div>🎯 <b>${log.action_type}</b>: <span style="color:#059669; font-weight:800;">${log.target_name}</span></div>
+        </div>`;
+      });
+      container.innerHTML = html;
+    } catch(e) { container.innerHTML = '<div style="font-size:11px; color:#DC2626; text-align:center;">डेटा लोड नहीं हो सका।</div>'; }
+  }
+  function closeStaffActivityModal() { document.getElementById('staffActivityModal').classList.remove('active'); }
+
+  async function fetchBlockedMerchantsAdmin(btn = null) {
+    const container = document.getElementById('adminBlockedMerchantsList');
+    if(btn) btn.innerHTML = '<span class="spinner"></span>';
+    container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center;">लोड हो रहा है...</div>';
+    
+    try {
+      const { data, error } = await supabaseClient.from('merchants').select('*').in('status', ['closed', 'false']);
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center; padding:10px;">अर्चीव खाली है। कोई ब्लॉक्ड मर्चेंट नहीं है।</div>';
+        if(btn) btn.innerHTML = '🔄 रिफ्रेश';
+        return;
+      }
+
+      let html = '';
+      data.forEach(m => {
+        html += `
+          <div style="background:#FFF; padding:10px; border-radius:8px; border:1px solid #E5E7EB; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+            <div>
+              <div style="font-weight:900; color:#991B1B;">🏪 ${m.store_name}</div>
+              <div style="font-size:9px; color:#6B7280; margin-top:2px;">📞 ${m.phone || 'N/A'}</div>
+            </div>
+            <button class="btn-action" style="background:#059669; color:#FFF; font-size:10px;" id="recoverBtn_${m.id}" onclick="adminUnblockMerchant('${m.id}', '${m.store_name}')">♻️ रिकवर (Unblock)</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    } catch(e) { container.innerHTML = '<div style="font-size:11px; color:#DC2626; text-align:center;">त्रुटि: लोड नहीं हो सका</div>'; }
+    if(btn) btn.innerHTML = '🔄 रिफ्रेश';
+  }
+
+  async function adminUnblockMerchant(id, storeName) {
+    const btn = document.getElementById(`recoverBtn_${id}`);
+    if(btn) btn.innerHTML = '<span class="spinner"></span>';
+    try {
+      await supabaseClient.from('merchants').update({ status: 'approved' }).eq('id', id);
+      await logStaffActivity(`मर्चेंट को अर्चीव से रिकवर किया`, storeName);
+      showCustomAlert("सफलता", `मर्चेंट '${storeName}' को सफलतापूर्वक अनब्लॉक (रिकवर) कर लिया गया है।`, "✅");
+      fetchBlockedMerchantsAdmin(); 
+      fetchSupabaseMerchants(); 
+    } catch(e) { showCustomAlert("त्रुटि", "रिकवर करने में विफल!", "❌"); }
+  }
+
+  async function fetchSupabaseMerchants() {
+    const btn = document.getElementById('refreshDataBtn');
+    if (btn) { btn.innerHTML = '<span class="spinner"></span> रिफ्रेश हो रहा...'; btn.disabled = true; }
+    
+    await preloadAllBackendData();
+    
+    if (btn) { btn.innerHTML = '🔄 रिफ्रेश'; btn.disabled = false; }
+  }
+
+  function requestSecureAction(actionType, targetId, targetName) {
+    pendingSecureAction = actionType;
+    pendingSecureData = { id: targetId, name: targetName };
+    document.getElementById('actionAuthPinInput').value = '';
+    document.getElementById('actionAuthModal').classList.add('active');
+  }
+
+  function closeActionAuthModal() {
+    document.getElementById('actionAuthModal').classList.remove('active');
+    pendingSecureAction = null; pendingSecureData = null;
+  }
+
+  async function executeSecuredAction() {
+    const pin = document.getElementById('actionAuthPinInput').value.trim();
+    const btn = document.getElementById('confirmActionBtn');
+    
+    if (pin !== currentStaffPin) {
+      showCustomAlert("सुरक्षा अलर्ट", "❌ आपका पिन गलत है। एक्सेस रोक दिया गया है!", "🚫");
+      return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span>';
+    
+    try {
+      if (pendingSecureAction === 'block_merchant') {
+        await supabaseClient.from('merchants').update({ status: 'closed' }).eq('id', pendingSecureData.id);
+        await logStaffActivity('मर्चेंट को ब्लॉक किया (Blocked)', pendingSecureData.name);
+        showCustomAlert("सफलता", `मर्चेंट '${pendingSecureData.name}' को ब्लॉक कर दिया गया है।`, "✅");
+      } 
+      else if (pendingSecureAction === 'unblock_merchant') {
+        await supabaseClient.from('merchants').update({ status: 'approved' }).eq('id', pendingSecureData.id);
+        await logStaffActivity('मर्चेंट को अनब्लॉक किया (Unblocked)', pendingSecureData.name);
+        showCustomAlert("सफलता", `मर्चेंट '${pendingSecureData.name}' को अनब्लॉक कर दिया गया है।`, "✅");
+      }
+      else if (pendingSecureAction === 'delete_merchant') {
+        await supabaseClient.from('merchants').delete().eq('id', pendingSecureData.id);
+        await logStaffActivity('मर्चेंट को डिलीट किया (Deleted)', pendingSecureData.name);
+        showCustomAlert("चेतावनी", `मर्चेंट '${pendingSecureData.name}' को सिस्टम से हमेशा के लिए डिलीट कर दिया गया है।`, "🗑️");
+      }
+
+      closeActionAuthModal();
+      fetchSupabaseMerchants();
+    } catch(e) { showCustomAlert("त्रुटि", "सिस्टम में खराबी आ गई है: " + e.message, "❌"); }
+    btn.innerHTML = 'कन्फर्म';
+  }
+
+  function promptForceChangePin(merchantId, merchantName) {
+    const newPin = prompt(`मर्चेंट (${merchantName}) के लिए नया 4 अंकों का पिन दर्ज करें:`);
+    if(newPin !== null && newPin.trim().length === 4) {
+      requestSecureActionWithPayload('change_pin', merchantId, merchantName, newPin.trim());
+    } else if(newPin !== null) { showCustomAlert("त्रुटि", "पिन केवल 4 अंकों का होना चाहिए।", "⚠️"); }
+  }
+
+  async function requestSecureActionWithPayload(action, id, name, payload) {
+    pendingSecureAction = action;
+    pendingSecureData = { id: id, name: name, payload: payload };
+    document.getElementById('actionAuthPinInput').value = '';
+    document.getElementById('actionAuthModal').classList.add('active');
+    
+    document.getElementById('confirmActionBtn').onclick = async function() {
+      const pin = document.getElementById('actionAuthPinInput').value.trim();
+      if (pin !== currentStaffPin) { showCustomAlert("सुरक्षा अलर्ट", "❌ आपका पिन गलत है। एक्सेस रोक दिया गया है!", "🚫"); return; }
+      
+      this.innerHTML = '<span class="spinner"></span>';
+      if(pendingSecureAction === 'change_pin') {
+        await supabaseClient.from('merchants').update({ pin: pendingSecureData.payload }).eq('id', pendingSecureData.id);
+        await logStaffActivity('मर्चेंट का पिन बदला (Pin Changed)', pendingSecureData.name);
+        showCustomAlert("सफलता", "मर्चेंट का पिन सफलतापूर्वक बदल दिया गया है।", "✅");
+      }
+      closeActionAuthModal();
+      document.getElementById('confirmActionBtn').onclick = executeSecuredAction; 
+      this.innerHTML = 'कन्फर्म';
+      fetchSupabaseMerchants();
+    }
+  }
+
+  async function logStaffActivity(action, target) {
+    try { await supabaseClient.from('staff_activity_logs').insert([{ staff_name: currentStaffName, action_type: action, target_name: target }]); } catch(e) {}
+  }
+
+  async function approveMerchant(id, storeName) {
+    const btn = document.getElementById(`approveBtn_${id}`);
+    if(btn) btn.innerHTML = '<span class="spinner"></span>';
+    try {
+      await supabaseClient.from('merchants').update({ status: 'approved' }).eq('id', id);
+      approvedTodayCount++; 
+      document.getElementById('todayApprovedCount').innerText = approvedTodayCount;
+      
+      await logStaffActivity('दुकान अप्रूव की (Approved)', storeName);
+      fireOneSignalPush(id, storeName);
+
+      fetchSupabaseMerchants();
+      showCustomAlert("सफलता", `दुकान '${storeName}' सफलतापूर्वक लाइव कर दी गई है!\nमर्चेंट को सिस्टम नोटिफिकेशन भेज दिया गया है।`, "✅");
+    } catch (err) {
+      if(btn) btn.innerHTML = '⚡ अप्रूव करें';
+      showCustomAlert("त्रुटि", "कुछ गलत हो गया। दोबारा प्रयास करें।", "❌");
+    }
+  }
+
+  async function fireOneSignalPush(merchantId, storeName) {
+      const notificationData = {
+          app_id: ONESIGNAL_APP_ID,
+          target_channel: "push",
+          include_aliases: { external_id: [merchantId] },
+          headings: {"en": "🎉 बधाई हो!"},
+          contents: {"en": `आपकी शॉप (${storeName}) Star Shops पर लाइव हो चुकी है! 🚀 ऐप खोलें।`},
+          small_icon: "ic_stat_onesignal_default"
+      };
+
+      try {
+          await fetch("https://onesignal.com/api/v1/notifications", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "Authorization": `Basic ${ONESIGNAL_REST_API_KEY}` },
+              body: JSON.stringify(notificationData)
+          });
+      } catch (e) {}
+  }
+
+  function filterStaffReels(query) {
+    const q = query.toLowerCase().trim();
+    const filtered = masterReelsData.filter(m => (m.store_name && m.store_name.toLowerCase().includes(q)) || (m.phone && m.phone.includes(q)) || (m.address && m.address.toLowerCase().includes(q)));
+    renderStaffReelsList(filtered);
+  }
+
+  function filterQueriesLive(query) {
+    const q = query.toLowerCase().trim();
+    const filtered = merchantQueriesData.filter(item => (item.merchant_name && item.merchant_name.toLowerCase().includes(q)) || (item.query_text && item.query_text.toLowerCase().includes(q)));
+    renderQueriesList(filtered);
+  }
+
+  async function fetchMerchantQueries(isSilent = false) {
+    const btn = document.getElementById('syncQueriesBtn');
+    let originalText = "";
+    if (btn && !isSilent) { originalText = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span> सिंक...'; btn.disabled = true; }
+    
+    try {
+      const { data } = await supabaseClient.from('merchant_queries').select('*').order('id', { ascending: false });
+      merchantQueriesData = data || [];
+      updateQueryBadgeCount(merchantQueriesData.filter(q => q.status !== 'Resolved').length);
+      renderQueriesList(merchantQueriesData);
+    } catch (e) {}
+    
+    if (btn && !isSilent) { btn.innerHTML = originalText; btn.disabled = false; }
+  }
+
+  function renderQueriesList(dataArray) {
+    const container = document.getElementById('dedicatedMerchantQueriesContainer');
+    if (!container) return;
+    if (!dataArray || dataArray.length === 0) { container.innerHTML = '<div style="font-size:12px; color:#6B7280; text-align:center; padding:20px;">कोई क्वेरी उपलब्ध नहीं है।</div>'; return; }
+    let html = '';
+    dataArray.forEach(q => {
+      const isResolved = q.status === 'Resolved';
+      let replySectionHtml = '';
+      if (isResolved && q.staff_reply) {
+        replySectionHtml = `<div style="margin-top:8px; background:#ECFDF5; padding:10px; border-radius:8px; border:1px solid #A7F3D0; font-size:11px; color:#065F46;"><b>हमारा रिप्लाई:</b> ${q.staff_reply}</div>`;
+      } else if (!isResolved) {
+        replySectionHtml = `<button class="btn-action" style="margin-top:8px; background:#2563EB; color:#FFF;" onclick="openReplyModal('${q.id}', '${q.merchant_name}', '${encodeURIComponent(q.query_text)}')">💬 रिप्लाई दें</button>`;
+      }
+      html += `
+        <div style="background:#FFF; border:1px solid #E5E7EB; padding:12px; border-radius:12px; margin-bottom:12px; font-size:12px;">
+          <div style="font-weight:900; color:#111827; font-size:13px;">🏪 ${q.merchant_name || 'स्टार मर्चेंट'}</div>
+          <div style="color:#374151; margin-top:3px; font-weight:700;">💬 ${q.query_text}</div>
+          <div style="margin-top:8px; font-size:10px; color:${isResolved ? '#059669' : '#D97706'}; font-weight:800;">स्टेटस: ${isResolved ? '✅ हल किया गया' : '⏳ पेंडिंग'}</div>
+          ${replySectionHtml}
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function openReplyModal(queryId, merchantName, encodedQueryText) {
+    const queryText = decodeURIComponent(encodedQueryText);
+    window.activeReplyQueryText = queryText;
+    activeReplyQueryId = queryId;
+    activeReplyMerchantName = merchantName;
+    document.getElementById('replyQueryContext').innerHTML = `<b>मर्चेंट:</b> ${merchantName}<br><b>सवाल:</b> "${queryText}"`;
+    document.getElementById('staffReplyInput').value = '';
+    document.getElementById('replyQueryModal').classList.add('active');
+  }
+
+  function closeReplyModal() {
+    document.getElementById('replyQueryModal').classList.remove('active');
+    activeReplyQueryId = null; activeReplyMerchantName = "";
+  }
+
+  async function submitQueryReply() {
+    const replyText = document.getElementById('staffReplyInput').value.trim();
+    if(!replyText) { showCustomAlert("खाली रिप्लाई", "कृपया अपना जवाब टाइप करें।", "⚠️"); return; }
+    
+    document.getElementById('sendReplyBtn').innerHTML = '<span class="spinner"></span> भेज रहे...';
+    try {
+      const { error } = await supabaseClient.from('merchant_queries').update({ staff_reply: replyText, status: 'Resolved' }).eq('id', activeReplyQueryId);
+      if (error) throw error;
+      
+      await logStaffActivity('क्वेरी का रिप्लाई दिया', activeReplyMerchantName);
+      closeReplyModal();
+
+      let merchantPhone = "";
+      const merchantObj = masterReelsData.find(m => m.store_name === activeReplyMerchantName);
+      if (merchantObj && merchantObj.phone) { merchantPhone = merchantObj.phone.replace(/[^0-9]/g, ''); }
+
+      fetchMerchantQueries();
+
+      if (merchantPhone) {
+          const waMessage = encodeURIComponent(`*STAR SUPPORT UPDATE* ⭐\n\nनमस्ते ${activeReplyMerchantName},\nआपकी सपोर्ट क्वेरी का समाधान कर दिया गया है:\n\n*आपका सवाल:* ${window.activeReplyQueryText}\n*हमारा रिप्लाई:* ${replyText}\n\nधन्यवाद!`);
+          const waLink = `https://wa.me/91${merchantPhone}?text=${waMessage}`;
+
+          showCustomAlert(
+              "सफलता! ✅",
+              "डेटाबेस में रिप्लाई सेव हो गया है। क्या आप मर्चेंट को तुरंत WhatsApp पर भी सूचित करना चाहते हैं?",
+              "💬",
+              `<a href="${waLink}" target="_blank" class="btn-primary" style="background:#16A34A; text-decoration:none; margin-top:14px;" onclick="closeCustomAlert()">WhatsApp पर सूचित करें</a>`
+          );
+      } else { showCustomAlert("सफलता", "मर्चेंट के ऐप में रिप्लाई सफलतापुर्वक अपडेट कर दिया गया है!", "✅"); }
+
+    } catch(e) { showCustomAlert("त्रुटि", "रिप्लाई भेजने में विफल।", "❌"); }
+    document.getElementById('sendReplyBtn').innerText = "भेजें 🚀";
+  }
+
+  function updateQueryBadgeCount(count) {
+    const badge = document.getElementById('queryCountBadge');
+    if (!badge) return;
+    if (count > 0) { badge.innerText = count; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
+  }
+
+  function updateRedAlertBadgeCount(count) {
+    const badge = document.getElementById('redAlertCountBadge');
+    if (!badge) return;
+    if (count > 0) { badge.innerText = count; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
+  }
+
+  function handleBrandSecretClick() { secretClickCount++; if(secretClickCount >= 5) { secretClickCount = 0; document.getElementById('adminPinModal').classList.add('active'); } }
+  
+  async function fetchAdminVisitLog() {
+     const box = document.getElementById('adminVisitAlertBox');
+     box.innerHTML = '<span class="spinner" style="border-top-color:#991B1B;"></span> चेक कर रहे हैं...';
+     try {
+       const { data, error } = await supabaseClient.from('staff_activity_logs')
+          .select('*')
+          .like('action_type', '%Super Admin%')
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+       if(data && data.length > 0) {
+          const timeStr = new Date(data[0].created_at).toLocaleString('hi-IN');
+          box.innerHTML = `<b>आखरी सुपर एडमिन:</b><br>🕒 ${timeStr}<br>👤 <b>${data[0].staff_name}</b> द्वारा`;
+       } else { box.innerHTML = 'अभी तक कोई सुपर एडमिन विजिट नहीं हुई है।'; }
+     } catch(e) { box.innerHTML = 'डेटा लोड नहीं हो सका।'; }
+  }
+
+  async function fetchStaffAttendance() {
+      const container = document.getElementById('staffBurgerAttendanceLog');
+      container.innerHTML = '<div style="color:#6B7280; text-align:center;">लोड हो रहा है...</div>';
+      try {
+          const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+          const { data } = await supabaseClient.from('staff_activity_logs')
+             .select('staff_name, created_at')
+             .eq('action_type', 'पोर्टल में लॉगिन किया')
+             .gte('created_at', todayStart.toISOString())
+             .order('created_at', {ascending: false});
+
+          if(data && data.length > 0) {
+              const uniqueStaff = [];
+              const htmlArr = [];
+              data.forEach(d => {
+                 if(!uniqueStaff.includes(d.staff_name)) {
+                     uniqueStaff.push(d.staff_name);
+                     const time = new Date(d.created_at).toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
+                     htmlArr.push(`<div style="padding:4px 0; border-bottom:1px solid #E5E7EB;">✅ <b>${d.staff_name}</b> (लॉगिन: ${time})</div>`);
+                 }
+              });
+              container.innerHTML = htmlArr.join('');
+          } else { container.innerHTML = '<div style="color:#6B7280; text-align:center;">आज कोई ऑनलाइन नहीं आया है।</div>'; }
+      } catch(e) { container.innerHTML = '<div style="color:#DC2626; text-align:center;">डेटा लोड नहीं हुआ।</div>'; }
+  }
+
+  function toggleStaffBurgerDrawer() { 
+    const drawer = document.getElementById('staffBurgerDrawer');
+    drawer.classList.toggle('active'); 
+    if(drawer.classList.contains('active')) { fetchAdminVisitLog(); fetchStaffAttendance(); }
+  }
+
+  function startTimers() {
+    setInterval(() => {
+      sessionSeconds++;
+      const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
+      const s = (sessionSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('staffTimerDisplay').innerText = `एक्टिव समय: ${m}:${s}`;
+      document.getElementById('profileTimerText').innerText = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function switchStaffTab(tabName, el) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`staff-tab-${tabName}`).classList.add('active');
+    if(el) el.classList.add('active');
+    
+    if(tabName === 'profile') { setTimeout(() => renderMerchantPerformanceGraph(masterReelsData), 150); fetchMyActivityLogs(); }
+  }
+
+  async function fetchMyActivityLogs() {
+    const container = document.getElementById('staffMyActivityList');
+    const btn = document.getElementById('activityRefreshBtn');
+    if(btn) btn.innerHTML = '<span class="spinner" style="border-top-color:#111;"></span>';
+    container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center; padding:10px;">लोड हो रहा है...</div>';
+    
+    try {
+      const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+      const { data, error } = await supabaseClient.from('staff_activity_logs')
+        .select('*')
+        .eq('staff_name', currentStaffName)
+        .gte('created_at', todayStart.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        container.innerHTML = '<div style="font-size:11px; color:#6B7280; text-align:center; padding:10px;">आज अभी तक कोई एक्टिविटी नहीं है।</div>';
+        if(btn) btn.innerHTML = '🔄 रिफ्रेश';
+        return;
+      }
+      
+      let html = '';
+      data.forEach(log => {
+        const timeStr = new Date(log.created_at).toLocaleTimeString('hi-IN', {hour: '2-digit', minute:'2-digit'});
+        html += `<div class="activity-log-item"><b>[${timeStr}]</b> 🎯 ${log.action_type}: <span style="color:#059669; font-weight:800;">${log.target_name}</span></div>`;
+      });
+      container.innerHTML = html;
+    } catch(e) { container.innerHTML = '<div style="font-size:11px; color:#DC2626; text-align:center; padding:10px;">डेटा लोड करने में त्रुटि।</div>'; }
+    if(btn) btn.innerHTML = '🔄 रिफ्रेश';
+  }
+
+  function renderStaffReelsList(dataArray) {
+    const container = document.getElementById('staffPendingList');
+    if (!container) return;
+    if (!dataArray || dataArray.length === 0) { container.innerHTML = '<div style="font-size:12px; color:#6B7280; text-align:center; padding:10px;">कोई डेटा उपलब्ध नहीं है।</div>'; return; }
+    let html = '';
+    dataArray.forEach(item => {
+      const isApproved = item.status === 'approved' || item.status === 'live';
+      const isBlocked = item.status === 'closed' || item.status === 'false';
+      
+      html += `
+        <div class="item-row-white">
+          <div class="item-info">
+            <div>
+              <div style="font-size:13px; font-weight:900; color:#111827;">🏪 ${item.store_name || 'स्टोर'}</div>
+              <div style="font-size:11px; color:#6B7280;">📞 फोन: ${item.phone || 'एन/ए'} | 📍 पता: ${item.address || 'एन/ए'} | 👥 ग्राहक: ${item.customers || 0}</div>
+            </div>
+            <div>
+              <span class="status-indicator ${isBlocked ? 'status-red' : (isApproved ? 'status-green' : 'status-yellow')}">
+                ${isBlocked ? '🚫 ब्लॉक्ड' : (isApproved ? '✅ लाइव' : '⏳ पेंडिंग')}
+              </span>
+            </div>
+          </div>
+          <div class="action-btns">
+            ${isApproved ? `<button class="btn-action btn-approved-green" disabled>✅ लाइव है</button>` : (!isBlocked ? `<button class="btn-action btn-pending-yellow" id="approveBtn_${item.id}" onclick="approveMerchant('${item.id}', '${item.store_name}')">⚡ अप्रूव करें</button>` : '')}
+            
+            ${isBlocked ? `<button class="btn-action btn-info" onclick="requestSecureAction('unblock_merchant', '${item.id}', '${item.store_name}')">🔓 अनब्लॉक</button>` : `<button class="btn-action btn-warning" onclick="requestSecureAction('block_merchant', '${item.id}', '${item.store_name}')">🚫 ब्लॉक</button>`}
+            
+            <button class="btn-action btn-info" onclick="promptForceChangePin('${item.id}', '${item.store_name}')">🔑 पिन बदलें</button>
+            <button class="btn-action btn-delete" onclick="requestSecureAction('delete_merchant', '${item.id}', '${item.store_name}')">🗑 डिलीट</button>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderMerchantPerformanceGraph(dataSet) {
+    const sortedMerchants = [...dataSet].sort((a, b) => (b.customers || 0) - (a.customers || 0));
+    const top5 = sortedMerchants.slice(0, 5);
+    const labels = top5.map(m => `${m.store_name || 'स्टोर'}`);
+    const customerData = top5.map(m => m.customers || 0);
+
+    const ctx = document.getElementById('merchantPerformanceChart').getContext('2d');
+    if (performanceChartInstance) performanceChartInstance.destroy();
+
+    performanceChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: labels, datasets: [{ label: 'कस्टमर ट्रैफिक', data: customerData, backgroundColor: '#2563EB', borderRadius: 8 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+  }
+
+  function updateMetrics() {
+    document.getElementById('metricPendingCount').innerText = masterReelsData.filter(m => m.status !== 'approved' && m.status !== 'live' && m.status !== 'closed' && m.status !== 'false').length;
+    document.getElementById('metricApprovedLiveCount').innerText = masterReelsData.filter(m => m.status === 'approved' || m.status === 'live').length;
+    document.getElementById('metricBlockedCount').innerText = masterReelsData.filter(m => m.status === 'closed' || m.status === 'false').length;
+    document.getElementById('metricMilestoneCount').innerText = masterReelsData.filter(m => (m.customers || 0) >= 50).length;
+    document.getElementById('todayApprovedCount').innerText = approvedTodayCount;
+  }
+
+  async function handleStaffLogout() { if (confirm("लॉग आउट करना चाहते हैं?")) { location.reload(); } }
+
+  function toggleLeftRedAlertDrawer(isOpen) {
+    const drawer = document.getElementById('leftRedAlertDrawer');
+    if (isOpen) {
+      drawer.classList.add('active');
+      renderLeftDrawerExpiredList(expiredMerchantsData);
+      populateLeftDrawerAreaDropdown(expiredMerchantsData);
+    } else {
+      drawer.classList.remove('active');
+    }
+  }
+
+  function toggleRightMilestoneDrawer(isOpen) {
+    const drawer = document.getElementById('rightMilestoneDrawer');
+    if (isOpen) {
+      drawer.classList.add('active');
+      const milestoneMerchants = masterReelsData.filter(m => (m.customers || 0) >= 50);
+      renderRightDrawerMilestoneList(milestoneMerchants);
+    } else {
+      drawer.classList.remove('active');
+    }
+  }
+
+  function renderLeftDrawerExpiredList(dataArray) {
+    const container = document.getElementById('leftDrawerExpiredList');
+    if (!container) return;
+    if (!dataArray || dataArray.length === 0) {
+      container.innerHTML = '<div style="font-size:12px; color:#6B7280; text-align:center; padding:30px;">कोई एक्सपायर्ड रेड अलर्ट मर्चेंट नहीं मिला।</div>';
+      return;
+    }
+    let html = '';
+    dataArray.forEach(m => {
+      let phoneClean = m.phone ? m.phone.replace(/[^0-9]/g, '') : '';
+      let waLink = phoneClean ? `https://wa.me/91${phoneClean}?text=` + encodeURIComponent(`नमस्ते ${m.store_name || 'स्टोर'}, आपका Star Shops का सब्सक्रिप्शन एक्सपायर हो गया है। कृपया रिचार्ज करें।`) : '#';
+      let callLink = phoneClean ? `tel:${phoneClean}` : '#';
+
+      html += `
+        <div style="background:#FFF; border:1px solid #FCA5A5; padding:14px; border-radius:12px; margin-bottom:10px; font-size:12px;">
+          <div style="font-weight:900; color:#991B1B; font-size:14px; margin-bottom:4px;">🔴 🏪 ${m.store_name || 'स्टोर'}</div>
+          <div style="color:#4B5563; margin-bottom:4px;">📍 पता: ${m.address || 'दिल्ली'} | 📞 ${m.phone || 'N/A'}</div>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <a href="${callLink}" class="btn-action" style="flex:1; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; justify-content:center;">📞 कॉल करें</a>
+            <a href="${waLink}" target="_blank" class="btn-action" style="flex:1; background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; justify-content:center;">💬 व्हाट्सएप</a>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function populateLeftDrawerAreaDropdown(dataArray) {
+    const select = document.getElementById('leftDrawerAreaSelect');
+    if(!select) return;
+    const locations = [...new Set(dataArray.map(m => m.location || m.address || 'दिल्ली'))];
+    let html = '<option value="">सभी एरिया / लोकेशन (All Areas)</option>';
+    locations.forEach(loc => { html += `<option value="${loc}">${loc}</option>`; });
+    select.innerHTML = html;
+  }
+
+  function filterLeftDrawerRedAlert(query) {
+    const q = query.toLowerCase().trim();
+    const filtered = expiredMerchantsData.filter(m => (m.store_name && m.store_name.toLowerCase().includes(q)) || (m.address && m.address.toLowerCase().includes(q)) || (m.phone && m.phone.includes(q)));
+    renderLeftDrawerExpiredList(filtered);
+  }
+
+  function filterLeftDrawerByArea(area) {
+    if (!area) { renderLeftDrawerExpiredList(expiredMerchantsData); return; }
+    const filtered = expiredMerchantsData.filter(m => (m.location === area || m.address === area));
+    renderLeftDrawerExpiredList(filtered);
+  }
+
+  function renderRightDrawerMilestoneList(dataArray) {
+    const container = document.getElementById('rightDrawerMilestoneList');
+    if (!container) return;
+    if (!dataArray || dataArray.length === 0) {
+      container.innerHTML = '<div style="font-size:12px; color:#6B7280; text-align:center; padding:30px;">अभी किसी मर्चेंट के 50 ग्राहक पूरे नहीं हुए हैं।</div>';
+      return;
+    }
+    let html = '';
+    dataArray.forEach(m => {
+      let phoneClean = m.phone ? m.phone.replace(/[^0-9]/g, '') : '';
+      let waLink = phoneClean ? `https://wa.me/91${phoneClean}?text=` + encodeURIComponent(`बधाई हो ${m.store_name || 'स्टोर'}! आपकी दुकान पर 50 ग्राहक पूरे हो चुके हैं। ₹10 डेली डिस्काउंट ऑफर के बारे में बात करने के लिए कॉल करें।`) : '#';
+      let callLink = phoneClean ? `tel:${phoneClean}` : '#';
+
+      html += `
+        <div style="background:#FFF; border:1px solid #A7F3D0; padding:14px; border-radius:12px; margin-bottom:10px; font-size:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <div style="font-weight:900; color:#065F46; font-size:14px;">🎯 🏪 ${m.store_name || 'स्टोर'}</div>
+            <span style="background:#D1FAE5; color:#065F46; font-weight:800; font-size:11px; padding:3px 8px; border-radius:6px;">👥 ${m.customers || 0} ग्राहक</span>
+          </div>
+          <div style="color:#4B5563; margin-bottom:4px;">📍 पता: ${m.address || 'दिल्ली'} | 📞 ${m.phone || 'N/A'}</div>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <a href="${callLink}" class="btn-action" style="flex:1; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; justify-content:center;">📞 कॉल करें</a>
+            <a href="${waLink}" target="_blank" class="btn-action" style="flex:1; background:#ECFDF5; color:#059669; border:1px solid #A7F3D0; justify-content:center;">💬 व्हाट्सएप (₹10 ऑफर)</a>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function filterRightDrawerMilestone(query) {
+    const q = query.toLowerCase().trim();
+    const milestoneMerchants = masterReelsData.filter(m => (m.customers || 0) >= 50);
+    const filtered = milestoneMerchants.filter(m => (m.store_name && m.store_name.toLowerCase().includes(q)) || (m.address && m.address.toLowerCase().includes(q)) || (m.phone && m.phone.includes(q)));
+    renderRightDrawerMilestoneList(filtered);
+  }
+</script>
+</body>
+</html>
