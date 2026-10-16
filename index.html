@@ -2145,6 +2145,40 @@
     });
     container.innerHTML = html;
   }
+    // ⚡ स्टाफ पोर्टल रिमोट 404 लिसनर (एडमिन पैनल के किल-स्विच को सुनने वाला इंजन)
+  async function checkStaffPortalAuthority() {
+    try {
+      const { data } = await supabaseClient.from('admin_master').select('staff_portal_active').eq('id', 1).maybeSingle();
+      if (data && data.staff_portal_active === false) {
+        // तुरंत 404 क्रैश स्क्रीन दिखाना
+        try { localStorage.clear(); sessionStorage.clear(); } catch(err) {}
+        document.documentElement.innerHTML = `
+          <!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>404 Not Found</title>
+          <style>body{background:#030303;color:#FFF;font-family:monospace;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;margin:0;}h1{font-size:90px;color:#DC2626;margin:0;font-weight:900;}p{color:#9CA3AF;font-size:15px;margin-top:10px;}</style>
+          </head><body><h1>404</h1><p>The requested resource was not found on this server.</p></body></html>
+        `;
+        throw new Error("404 Lockdown Active");
+      }
+    } catch (e) {}
+  }
+  
+  // हर 3 सेकंड में एडमिन के कमांड को चेक करना
+  setInterval(checkStaffPortalAuthority, 3000);
+
+  // Supabase रियल-टाइम चैनल के जरिए इंस्टेंट 404 ट्रिगर
+  try {
+    supabaseClient
+      .channel('staff_portal_lockdown_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_master' }, payload => {
+        if (payload.new && payload.new.staff_portal_active === false) {
+          checkStaffPortalAuthority();
+        } else if (payload.new && payload.new.staff_portal_active === true) {
+          location.reload();
+        }
+      })
+      .subscribe();
+  } catch(e) {}
 </script>
+  
 </body>
 </html>
